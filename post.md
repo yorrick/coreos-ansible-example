@@ -1,3 +1,9 @@
+# New instructions
+
+--private-key=~/.vagrant.d/insecure_private_key
+
+
+
 # Managing CoreOS with Ansible
 
 This post will cover basic techniques for managing [CoreOS][coreos] machines using [Ansible][ansible]. Familiarity with Ansible and basic understanding of CoreOS are helpful in following along with this post.

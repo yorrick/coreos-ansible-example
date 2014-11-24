@@ -85,16 +85,25 @@ Vagrant.configure("2") do |config|
         vb.cpus = $vb_cpus
       end
 
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "bootstrap.yml"
+        ansible.inventory_path = "inventory/vagrant"
+        ansible.limit = 'all'
+        ansible.verbose = 'vvvv'
+        ansible.host_key_checking = false
+      end
+
       ip = "172.12.8.#{i+100}"
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
-      if File.exist?(CLOUD_CONFIG_PATH)
-        config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
-        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-      end
+      #if File.exist?(CLOUD_CONFIG_PATH)
+      #  config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
+      #  config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+      #end
+
 
     end
   end
