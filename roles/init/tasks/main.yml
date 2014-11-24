@@ -1,0 +1,13 @@
+---
+
+- name: Install cloud config file
+  copy: src=user-data.yml dest=/var/lib/coreos-vagrant/vagrantfile-user-data
+  sudo: yes
+
+- name: Test that etcd is running
+  shell: "etcdctl set /message Hello && etcdctl rm /message"
+
+- name: Test that fleet is running
+  command: fleetctl list-machines
+  register: fleet_machines
+
