@@ -1,6 +1,24 @@
 # New instructions
 
---private-key=~/.vagrant.d/insecure_private_key
+Install ansible and its dependencies
+```
+brew install ansible
+ansible-galaxy install -r ansible-requirements.txt --ignore-errors --force
+```
+
+Boot vagrant VMs (provisioning will be made at the same time)
+```
+vagrant up
+```
+
+
+
+
+
+
+
+
+
 
 
 

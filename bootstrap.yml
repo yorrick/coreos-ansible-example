@@ -1,5 +1,9 @@
-- name: bootstrap coreos hosts
+---
+
+# This role installs python on coreos
+- name: Bootstrap coreos hosts
   hosts: coreos
   gather_facts: False
   roles:
     - defunctzombie.coreos-bootstrap
+    - init
