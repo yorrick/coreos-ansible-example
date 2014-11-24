@@ -5,10 +5,6 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
-CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data")
-CONFIG = File.join(File.dirname(__FILE__), "config.rb")
-
-# Defaults for config options defined in CONFIG
 $num_instances = 1
 $update_channel = "alpha"
 $enable_serial_logging = false
@@ -20,10 +16,6 @@ $vb_cpus = 1
 # $num_instances while allowing config.rb to override it
 if ENV["NUM_INSTANCES"].to_i > 0 && ENV["NUM_INSTANCES"]
   $num_instances = ENV["NUM_INSTANCES"].to_i
-end
-
-if File.exist?(CONFIG)
-  require CONFIG
 end
 
 Vagrant.configure("2") do |config|
@@ -98,12 +90,6 @@ Vagrant.configure("2") do |config|
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
-
-      #if File.exist?(CLOUD_CONFIG_PATH)
-      #  config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
-      #  config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-      #end
-
 
     end
   end
