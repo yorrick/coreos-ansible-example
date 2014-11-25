@@ -11,3 +11,5 @@ core-01
 ansible_ssh_user=core
 ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
 host_key_checking=False
+# this value is automatically changed by vagrant during "vagrant up"
+cluster_token=https://discovery.etcd.io/xxxxxxxx

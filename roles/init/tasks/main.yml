@@ -1,8 +1,15 @@
 ---
 
+#- name: Generate a new token for the cluser
+#  command: curl --silent https://discovery.etcd.io/new
+#  register: cluster_token
+
 - name: Install cloud config file
-  copy: src=user-data.yml dest=/var/lib/coreos-vagrant/vagrantfile-user-data
+  template: src=user-data.yml dest=/var/lib/coreos-vagrant/vagrantfile-user-data
   sudo: yes
+
+- name: Wait for cloud config to be applied
+  command: sleep 10
 
 - name: Test that etcd is running
   shell: "etcdctl set /message Hello && etcdctl rm /message"
@@ -10,4 +17,10 @@
 - name: Test that fleet is running
   command: fleetctl list-machines
   register: fleet_machines
+
+- name: Copy database unit
+  copy: src=database.yml dest=/home/core/database.service
+
+#- name: Copy discovery unit
+#  copy: src=database.yml dest=/home/core/database.service
 

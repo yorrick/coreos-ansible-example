@@ -1,12 +1,16 @@
 # New instructions
 
-Install ansible and its dependencies
+1. Install ansible and its dependencies
 ```
 brew install ansible
 ansible-galaxy install -r ansible-requirements.txt --ignore-errors --force
 ```
 
-Boot vagrant VMs (provisioning will be made at the same time)
+2. Generate a new token for the cluster by going to https://discovery.etcd.io/new and replacing "discover" parameter in
+user-data file.
+
+
+3. Boot vagrant VMs (provisioning will be made at the same time)
 ```
 vagrant up
 ```

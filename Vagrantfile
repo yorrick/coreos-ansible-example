@@ -39,6 +39,27 @@ Vagrant.configure("2") do |config|
     config.vbguest.auto_update = false
   end
 
+
+  # replaces tocken with a new value when doing "vagrant up"
+  inventory_file = 'inventory/vagrant'
+  example_inventory_file = inventory_file + '.example'
+
+  if !File.exists?(inventory_file)
+    require 'fileutils'
+    FileUtils.copy_file(example_inventory_file, inventory_file)
+  end
+
+  if ARGV[0].eql?('up')
+    require 'open-uri'
+    token = open('https://discovery.etcd.io/new').read
+
+    text = File.read(inventory_file)
+    new_contents = text.gsub(/cluster_token.*/, 'cluster_token=' + token)
+
+    File.open(inventory_file, "w") {|file| file.puts new_contents }
+  end
+
+
   (1..$num_instances).each do |i|
     config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
