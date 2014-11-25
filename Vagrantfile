@@ -6,17 +6,12 @@ require 'fileutils'
 Vagrant.require_version ">= 1.6.0"
 
 $num_instances = 1
-$update_channel = "alpha"
+$update_channel = "stable"
 $enable_serial_logging = false
 $vb_gui = false
 $vb_memory = 1024
 $vb_cpus = 1
 
-# Attempt to apply the deprecated environment variable NUM_INSTANCES to
-# $num_instances while allowing config.rb to override it
-if ENV["NUM_INSTANCES"].to_i > 0 && ENV["NUM_INSTANCES"]
-  $num_instances = ENV["NUM_INSTANCES"].to_i
-end
 
 Vagrant.configure("2") do |config|
   config.vm.box = "coreos-%s" % $update_channel
@@ -45,7 +40,6 @@ Vagrant.configure("2") do |config|
   example_inventory_file = inventory_file + '.example'
 
   if !File.exists?(inventory_file)
-    require 'fileutils'
     FileUtils.copy_file(example_inventory_file, inventory_file)
   end
 
@@ -61,6 +55,7 @@ Vagrant.configure("2") do |config|
 
 
   (1..$num_instances).each do |i|
+
     config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
 
@@ -102,7 +97,7 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "bootstrap.yml"
         ansible.inventory_path = "inventory/vagrant"
         ansible.limit = 'all'
-        ansible.verbose = 'vvvv'
+        ansible.verbose = 'vv'
         ansible.host_key_checking = false
       end
 

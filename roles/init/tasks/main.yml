@@ -24,3 +24,58 @@
 #- name: Copy discovery unit
 #  copy: src=database.yml dest=/home/core/database.service
 
+# fleetctl submit database.service
+# fleetctl start database.service
+
+# fleetctl list-machines
+# fleetctl list-units
+
+
+#  - name: database@.service
+#    command: start
+#    enable: true
+#    content: |
+#      [Unit]
+#      Description=Postgres database
+#      After=docker-tcp.socket
+#      Requires=docker-tcp.socket
+#
+#      [Service]
+#      TimeoutStartSec=0
+#      ExecStartPre=-/usr/bin/docker kill database-01
+#      ExecStartPre=-/usr/bin/docker rm database-01
+#      ExecStartPre=/usr/bin/docker pull yorrick/database
+#      ExecStart=/usr/bin/docker run --name database-01 -p 5432:5432 yorrick/database
+#
+#  - name: database-discovery@.service
+#    command: start
+#    enable: true
+#    content: |
+#      [Unit]
+#      Description=Announce database
+#      BindsTo=database.service
+#
+#      [Service]
+#      ExecStart=/bin/sh -c "while true; do etcdctl set /services/database '{ \"host\": \"%H\", \"port\": 5432, \"version\": \"52c7248a14\" }' --ttl 60; sleep 45; done"
+#      ExecStop=/usr/bin/etcdctl rm /services/database
+#
+#      [X-Fleet]
+#      MachineOf=database.service
+#  - name: application@.service
+#    command: start
+#    enable: true
+#    content: |
+#      [Unit]
+#      Description=Flask application
+#      #After=database.service
+#      #Requires=database.service
+#
+#      [Service]
+#      TimeoutStartSec=0
+#      ExecStartPre=-/usr/bin/docker kill application-01
+#      ExecStartPre=-/usr/bin/docker rm application-01
+#      ExecStartPre=/usr/bin/docker pull yorrick/application
+#      ExecStart=/usr/bin/docker run --name application-01 -p 80:80 yorrick/application
+#
+#      [X-Fleet]
+#      Global=true
