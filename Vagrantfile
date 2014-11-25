@@ -65,11 +65,14 @@ Vagrant.configure("2") do |config|
     File.open(inventory_file, "w") {|file| file.puts new_contents }
   end
 
+  # forwards the port of core-01 on host
+  config.vm.network "forwarded_port", guest: 4001, host: 4001
 
   (1..$num_instances).each do |i|
 
     config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
+
 
       if $enable_serial_logging
         logdir = File.join(File.dirname(__FILE__), "log")

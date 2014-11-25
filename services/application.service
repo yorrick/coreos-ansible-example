@@ -1,0 +1,18 @@
+- name: application@.service
+  command: start
+  enable: true
+  content: |
+    [Unit]
+    Description=Flask application
+    #After=database.service
+    #Requires=database.service
+
+    [Service]
+    TimeoutStartSec=0
+    ExecStartPre=-/usr/bin/docker kill application-01
+    ExecStartPre=-/usr/bin/docker rm application-01
+    ExecStartPre=/usr/bin/docker pull yorrick/application
+    ExecStart=/usr/bin/docker run --name application-01 -p 80:80 yorrick/application
+
+    [X-Fleet]
+    Global=true

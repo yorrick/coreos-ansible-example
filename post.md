@@ -6,16 +6,33 @@ brew install ansible
 ansible-galaxy install -r ansible-requirements.txt --ignore-errors --force
 ```
 
-2. Generate a new token for the cluster by going to https://discovery.etcd.io/new and replacing "discover" parameter in
-user-data file.
-
-
-3. Boot vagrant VMs (provisioning will be made at the same time)
+2. Boot vagrant VMs (provisioning will be made at the same time)
 ```
 vagrant up
 ```
 
+3. Install fleet and configure it
+```
+brew install fleetctl
+```
 
+4. Submit and run fleet services from your host
+
+```
+# Add vagrant private key to ssh (fleetctl doesn’t expose any options to configure the SSH connection)
+ssh-add ~/.vagrant.d/insecure_private_key
+
+# Cleanup known_hosts file 
+echo '' > /Users/yorrick/.fleetctl/known_hosts
+
+# tunnel configuration can b found using "vagrant ssh-config core-01" by example
+fleetctl --tunnel 127.0.0.1:2200 submit services/*
+fleetctl --tunnel 127.0.0.1:2200 start database.service
+
+# get unit statuses
+fleetctl --tunnel 127.0.0.1:2200 status database.service
+fleetctl --tunnel 127.0.0.1:2200 list-units
+```
 
 
 

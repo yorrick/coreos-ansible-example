@@ -11,7 +11,6 @@
 - name: Wait for cloud config to be applied
   wait_for: port=4001 delay=10
 
-
 - name: Test that etcd is running
   shell: "etcdctl set /message Hello && etcdctl rm /message"
 
@@ -19,21 +18,31 @@
   command: fleetctl list-machines
   register: fleet_machines
 
-- name: Create services directory
-  file: dest={{ services_dir }} state=directory
+#- name: Create services directory
+#  file: dest={{ services_dir }} state=directory
+#
+#- name: Copy database unit
+#  copy: src={{ item.key }} dest={{ services_dir }}/{{ item.value }}
+#  with_dict:
+#    database.yml: database.service
+#    database-discovery.yml: database-discovery.service
+#
+## fleetctl list-unit-files
+#- name: Submit services to fleet
+#  command: "fleetctl submit {{ services_dir }}/{{ item }}"
+#  with_items:
+#    - database.service
+#    - database-discovery.service
+#
+#- name: Start database
+#  command: "fleetctl start {{ item }}"
+#  with_items:
+#    - database.service
+#    - database-discovery.service
+#
+#- name: Wait for database to be started
+#  wait_for: port=5432 delay=100
 
-- name: Copy database unit
-  copy: src={{ item.key }} dest={{ services_dir }}/{{ item.value }}
-  with_dict:
-    database.yml: database.service
-    database-discovery.yml: database-discovery.service
-
-# fleetctl list-unit-files to list units
-- name: Submit services to fleet
-  command: "fleetctl submit {{ services_dir }}/{{ item }}"
-  with_items:
-    - database.service
-    - database-discovery.service
 
 #- name: Copy discovery unit
 #  copy: src=database.yml dest=/home/core/database.service
