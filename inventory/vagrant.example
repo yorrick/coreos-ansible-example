@@ -1,15 +1,14 @@
 ## inventory file for vagrant machines
-core-01 ansible_ssh_host=172.12.8.101
-
-[web]
-core-01
+<ssh_config>
 
 [coreos]
-core-01
+<core_list>
 
 [coreos:vars]
 ansible_ssh_user=core
 ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
 host_key_checking=False
+services_dir=/home/core/services
+
 # this value is automatically changed by vagrant during "vagrant up"
-cluster_token=https://discovery.etcd.io/xxxxxxxx
+<cluster_token>

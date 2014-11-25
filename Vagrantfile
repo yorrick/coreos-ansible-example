@@ -43,12 +43,24 @@ Vagrant.configure("2") do |config|
     FileUtils.copy_file(example_inventory_file, inventory_file)
   end
 
+  if ARGV[0].eql?('destroy')
+    FileUtils.rm(inventory_file)
+  end
+
   if ARGV[0].eql?('up')
     require 'open-uri'
-    token = open('https://discovery.etcd.io/new').read
+
+    cluster_token = open('https://discovery.etcd.io/new').read
+    ssh_config = (1..$num_instances).to_a.map {|index| "core-#{index} ansible_ssh_host=172.12.8.10#{index}"}
+    core_list = (1..$num_instances).to_a.map {|index| "core-#{index}"}
 
     text = File.read(inventory_file)
-    new_contents = text.gsub(/cluster_token.*/, 'cluster_token=' + token)
+
+    # writes ansible configuration
+    new_contents = text
+    new_contents = new_contents.gsub(/<ssh_config>/, ssh_config.join("\n"))
+    new_contents = new_contents.gsub(/<core_list>/, core_list.join("\n"))
+    new_contents = new_contents.gsub(/<cluster_token>/, 'cluster_token=' + cluster_token)
 
     File.open(inventory_file, "w") {|file| file.puts new_contents }
   end
