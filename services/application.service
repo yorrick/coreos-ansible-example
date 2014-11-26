@@ -1,18 +1,16 @@
-- name: application@.service
-  command: start
-  enable: true
-  content: |
-    [Unit]
-    Description=Flask application
-    #After=database.service
-    #Requires=database.service
+[Unit]
+Description=Flask application
+#After=database.service
+#Requires=database.service
 
-    [Service]
-    TimeoutStartSec=0
-    ExecStartPre=-/usr/bin/docker kill application-01
-    ExecStartPre=-/usr/bin/docker rm application-01
-    ExecStartPre=/usr/bin/docker pull yorrick/application
-    ExecStart=/usr/bin/docker run --name application-01 -p 80:80 yorrick/application
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill application-%i
+ExecStartPre=-/usr/bin/docker rm application-%i
+ExecStartPre=/usr/bin/docker pull yorrick/application
+ExecStartPost=/usr/bin/etcdctl set /services/application/%i ${COREOS_PUBLIC_IPV4}:%i
+ExecStart=/usr/bin/docker run --name application-%i -p 80:80 yorrick/application
+ExecStopPost=/usr/bin/etcdctl rm /services/application/%i
 
-    [X-Fleet]
-    Global=true
+[X-Fleet]
+Global=true

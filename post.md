@@ -28,12 +28,17 @@ echo '' > /Users/yorrick/.fleetctl/known_hosts
 # tunnel configuration can b found using "vagrant ssh-config core-01" by example
 fleetctl --tunnel 127.0.0.1:2200 submit services/*
 fleetctl --tunnel 127.0.0.1:2200 start database.service
+fleetctl --tunnel 127.0.0.1:2200 start database-discovery.service
+fleetctl --tunnel 127.0.0.1:2200 start application.service
 
 # get unit statuses
 fleetctl --tunnel 127.0.0.1:2200 status database.service
+fleetctl --tunnel 127.0.0.1:2200 status application.service
 fleetctl --tunnel 127.0.0.1:2200 list-units
 ```
 
+### To list services in etcd 
+curl -L http://127.0.0.1:4001/v2/keys/services
 
 
 

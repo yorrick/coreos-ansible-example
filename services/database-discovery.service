@@ -1,0 +1,16 @@
+[Unit]
+Description=Announce database
+After=etcd.service
+After=database.service
+BindsTo=database.service
+
+[Service]
+
+# Get CoreOS environmental variables
+EnvironmentFile=/etc/environment
+
+ExecStart=/bin/sh -c "while true; do etcdctl set /services/database '{ \"host\": \"%H\", \"ip\": \"${COREOS_PRIVATE_IPV4}\",  \"port\": 5432, \"version\": \"52c7248a14\" }' --ttl 60; sleep 45; done"
+ExecStop=/usr/bin/etcdctl rm /services/database
+
+[X-Fleet]
+MachineOf=database.service
