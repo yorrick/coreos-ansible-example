@@ -29,11 +29,11 @@ echo '' > /Users/yorrick/.fleetctl/known_hosts
 fleetctl --tunnel 127.0.0.1:2222 submit services/*
 fleetctl --tunnel 127.0.0.1:2222 start database.service
 fleetctl --tunnel 127.0.0.1:2222 start database-discovery.service
-fleetctl --tunnel 127.0.0.1:2222 start application.service
+fleetctl --tunnel 127.0.0.1:2222 start application@1
 
 # get unit statuses
 fleetctl --tunnel 127.0.0.1:2222 status database.service
-fleetctl --tunnel 127.0.0.1:2222 status application.service
+fleetctl --tunnel 127.0.0.1:2222 status application@1
 fleetctl --tunnel 127.0.0.1:2222 list-units
 ```
 
@@ -66,7 +66,9 @@ docker commit application-01 yorrick/application
 
 
 Rebuild application container
-docker stop application-01 && docker rm application-01 && docker build -t yorrick/application . && docker run -d --name application-01 -p 80:80 yorrick/application
+cd share/application/
+docker stop application-01; docker rm application-01; docker build -t yorrick/application . && docker run -t -i --name application-01 -p 80:80 yorrick/application /bin/bash
+docker push yorrick/application
 
 Test that you can connect to postgres from container
 psql --username docker --host 172.12.8.101 --port 5432 docker
