@@ -76,6 +76,8 @@ psql --username docker --host 172.12.8.101 --port 5432 docker
 
 
 
+
+
 # Managing CoreOS with Ansible
 
 This post will cover basic techniques for managing [CoreOS][coreos] machines using [Ansible][ansible]. Familiarity with Ansible and basic understanding of CoreOS are helpful in following along with this post.
