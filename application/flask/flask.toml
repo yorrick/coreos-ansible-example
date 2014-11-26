@@ -2,7 +2,7 @@
 
 # The name of the template that will be used to render the application's configuration file
 # Confd will look in `/etc/conf.d/templates` for these files by default
-src = "flask.tmpl"
+src = "/application/config.py.template"
 
 # The location to place the rendered configuration file
 dest = "/application/config.py"
