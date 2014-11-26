@@ -11,6 +11,8 @@ $enable_serial_logging = false
 $vb_gui = false
 $vb_memory = 1024
 $vb_cpus = 1
+$expose_docker_tcp = 2375
+$expose_etcd = 4000
 
 
 Vagrant.configure("2") do |config|
@@ -65,8 +67,6 @@ Vagrant.configure("2") do |config|
     File.open(inventory_file, "w") {|file| file.puts new_contents }
   end
 
-  # forwards the port of core-01 on host
-  config.vm.network "forwarded_port", guest: 4001, host: 4001
 
   (1..$num_instances).each do |i|
 
@@ -92,6 +92,12 @@ Vagrant.configure("2") do |config|
           vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
           vb.customize ["modifyvm", :id, "--uartmode1", serialFile]
         end
+      end
+
+      # forwards the port of core-01 on host
+
+      if $expose_etcd
+        config.vm.network "forwarded_port", guest: 4001, host: ($expose_etcd + i - 1), auto_correct: true
       end
 
       if $expose_docker_tcp
@@ -120,7 +126,7 @@ Vagrant.configure("2") do |config|
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-      #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+      config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
     end
   end

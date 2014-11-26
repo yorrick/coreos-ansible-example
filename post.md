@@ -1,4 +1,4 @@
-# New instructions
+# CoreOS instructions
 
 1. Install ansible and its dependencies
 ```
@@ -26,22 +26,50 @@ ssh-add ~/.vagrant.d/insecure_private_key
 echo '' > /Users/yorrick/.fleetctl/known_hosts
 
 # tunnel configuration can b found using "vagrant ssh-config core-01" by example
-fleetctl --tunnel 127.0.0.1:2200 submit services/*
-fleetctl --tunnel 127.0.0.1:2200 start database.service
-fleetctl --tunnel 127.0.0.1:2200 start database-discovery.service
-fleetctl --tunnel 127.0.0.1:2200 start application.service
+fleetctl --tunnel 127.0.0.1:2222 submit services/*
+fleetctl --tunnel 127.0.0.1:2222 start database.service
+fleetctl --tunnel 127.0.0.1:2222 start database-discovery.service
+fleetctl --tunnel 127.0.0.1:2222 start application.service
 
 # get unit statuses
-fleetctl --tunnel 127.0.0.1:2200 status database.service
-fleetctl --tunnel 127.0.0.1:2200 status application.service
-fleetctl --tunnel 127.0.0.1:2200 list-units
+fleetctl --tunnel 127.0.0.1:2222 status database.service
+fleetctl --tunnel 127.0.0.1:2222 status application.service
+fleetctl --tunnel 127.0.0.1:2222 list-units
 ```
 
 ### To list services in etcd 
 curl -L http://127.0.0.1:4001/v2/keys/services
+etcdctl ls --recursive /
 
 
 
+
+# Build docker containers
+
+On core-01 by example, run
+
+```
+cd /home/core/share
+# build image
+docker build -t yorrick/application application/
+# push image to docker repo (credentials will be asked)
+docker push yorrick/application
+```
+
+# to test if container boots (optionnal)
+docker run --rm -t -i --name application-01 -p 80:80 yorrick/application
+# run it in detached mode (optionnal)
+docker run -d --name application-01 -p 80:80 yorrick/application
+# to commit a container (optionnal)
+docker commit application-01 yorrick/application
+
+
+
+Rebuild application container
+docker stop application-01 && docker rm application-01 && docker build -t yorrick/application . && docker run -d --name application-01 -p 80:80 yorrick/application
+
+Test that you can connect to postgres from container
+psql --username docker --host 172.12.8.101 --port 5432 docker
 
 
 
