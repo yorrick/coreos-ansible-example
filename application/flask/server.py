@@ -1,11 +1,6 @@
-# Import your application as:
-# from app import application
-# Example:
-
 from app import app
-
-# Import CherryPy
 import cherrypy
+
 
 if __name__ == '__main__':
 
@@ -36,4 +31,3 @@ if __name__ == '__main__':
 
     cherrypy.engine.start()
     cherrypy.engine.block()
-
