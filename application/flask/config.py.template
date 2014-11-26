@@ -1,3 +1,1 @@
-DB_URL = 'postgresql+psycopg2://docker:docker@172.12.8.101:5432/docker'
-
-{{ .services_database.ip }}{{ .services_database.port }}
+DB_URL = 'postgresql+psycopg2://docker:docker@{{ .services_database.Value }}/docker'

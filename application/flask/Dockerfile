@@ -14,9 +14,8 @@ RUN apt-get update
 RUN apt-get install curl -y
 
 # Install confd
-RUN cd /usr/local/bin
-RUN curl -L https://github.com/kelseyhightower/confd/releases/download/v0.6.3/confd-0.6.3-linux-amd64 -o confd
-RUN chmod +x confd
+RUN curl -L https://github.com/kelseyhightower/confd/releases/download/v0.6.3/confd-0.6.3-linux-amd64 -o /usr/local/bin/confd
+RUN chmod +x /usr/local/bin/confd
 RUN mkdir -p /etc/confd/{conf.d,templates}
 
 
@@ -37,11 +36,16 @@ RUN apt-get install -y postgresql-client-9.3 libpq-dev
 
 # Copy the application folder inside the container
 ADD . /application
+
+# prepare files
 RUN touch /application/uwsgi_reload
+RUN chmod +x /application/confd-watch
+
 
 # Get pip to download and install requirements:
 RUN pip install -r /application/requirements.txt
 RUN pip install uwsgi
+
 
 # Expose ports
 EXPOSE 8000
@@ -50,5 +54,5 @@ EXPOSE 8000
 WORKDIR /application
 
 # CMD python server.py
-CMD uwsgi --http 0.0.0.0:8000 --master --module app --callable app --touch-reload /application/uwsgi_reload
+# CMD uwsgi --http 0.0.0.0:8000 --master --module app --callable app --touch-reload /application/uwsgi_reload --logto /var/log/application.log
 
