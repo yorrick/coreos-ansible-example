@@ -14,12 +14,6 @@ RUN apt-get update
 RUN apt-get install curl -y
 
 
-# Install etcd
-# RUN curl -L https://github.com/coreos/etcd/releases/download/v0.4.6/etcd-v0.4.6-linux-amd64.tar.gz -o etcd-v0.4.6-linux-amd64.tar.gz
-# RUN tar xzvf etcd-v0.4.6-linux-amd64.tar.gz
-# RUN cp etcd-v0.4.6-linux-amd64/etcd* /usr/local/bin
-
-
 # Install confd ( > 0.6 releases do not seem to work)
 RUN curl -L https://github.com/kelseyhightower/confd/releases/download/v0.5.0/confd-0.5.0-linux-amd64 -o /usr/local/bin/confd
 RUN chmod +x /usr/local/bin/confd

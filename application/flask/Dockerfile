@@ -32,8 +32,3 @@ RUN pip install -r /application/requirements.txt
 
 # Expose ports
 EXPOSE 8000
-
-
-# CMD python server.py
-# CMD uwsgi --http 0.0.0.0:8000 --master --module app --callable app --touch-reload /application/uwsgi_reload --logto /var/log/application.log
-

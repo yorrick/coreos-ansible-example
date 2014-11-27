@@ -39,6 +39,13 @@ RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.co
 # And add ``listen_addresses`` to ``/etc/postgresql/9.3/main/postgresql.conf``
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
+
+# creates test data
+# RUN psql docker --command "create table \"user\" (id serial NOT NULL PRIMARY KEY, username character varying(80) NOT NULL UNIQUE, email character varying(120) NOT NULL UNIQUE);"
+# RUN psql docker --command "insert into \"user\" values (1, 'toto', 'toto@example.com');"
+# RUN psql docker --command "insert into \"user\" values (2, 'tata', 'tata@example.com');"
+
+
 # Expose the PostgreSQL port
 EXPOSE 5432
 

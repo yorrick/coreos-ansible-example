@@ -61,14 +61,14 @@ On core-01 by example, run
 docker build -t yorrick/uwsgi /home/core/share/application/uwsgi && docker push yorrick/uwsgi
 ```
 
-## Build image and push application image
+## Build and push application image
 ```
 docker build -t yorrick/application /home/core/share/application/flask && docker push yorrick/application
 ```
 
-## Pull database image
+## Build and push database image
 ```
-docker pull yorrick/database
+docker build -t yorrick/database /home/core/share/application/database && docker push yorrick/database
 ```
 
 
@@ -84,11 +84,6 @@ docker run --rm -t -i --name application-01 -p 80:80 yorrick/application
 docker run -d --name application-01 -p 80:80 yorrick/application
 ```
 
-
-## Commit a container (to save database state)
-```
-docker commit database-01 yorrick/database
-```
 
 
 ## Debug confd 

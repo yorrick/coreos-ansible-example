@@ -20,9 +20,13 @@ done
 confd -interval 10 -node $ETCD &
 echo "[uwsgi] confd is listening for changes on etcd..."
 
-# Start nginx
-echo "[uwsgi] starting uwsgi service..."
-uwsgi --http 0.0.0.0:8000 --master --module app --callable app --touch-reload /application/uwsgi_reload
+# Start uwsgi
+echo "[uwsgi] Init database if necessary"
+python init_db.py
 
-# Tail all nginx log files
+# Start uwsgi
+echo "[uwsgi] starting uwsgi service..."
+uwsgi --http 0.0.0.0:8000 --master --logto /var/log/application.log --module app --callable app --touch-reload /application/uwsgi_reload
+
+# Tail all uwsgi log files
 tail -f /var/log/application.log
