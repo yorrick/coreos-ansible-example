@@ -49,21 +49,39 @@ etcdctl ls --recursive /
 
 On core-01 by example, run
 
+## Build and push base uwsgi image
 ```
-# build and push base uwsgi image
 docker build -t yorrick/uwsgi /home/core/share/application/uwsgi && docker push yorrick/uwsgi
-# build image and push image to docker repo (credentials will be asked)
+```
+
+## Build image and push application image
+```
 docker build -t yorrick/application /home/core/share/application/flask && docker push yorrick/application
-# pull database image
+```
+
+## Pull database image
+```
 docker pull yorrick/database
 ```
 
-# to test if container boots (optionnal)
+
+# Tests
+
+## Test if application container boots
+```
 docker run --rm -t -i --name application-01 -p 80:80 yorrick/application
-# run it in detached mode (optionnal)
+```
+
+## Run application container in detached mode
+```
 docker run -d --name application-01 -p 80:80 yorrick/application
-# to commit a container (optionnal)
-docker commit application-01 yorrick/application
+```
+
+
+## Commit a container (to save database state)
+```
+docker commit database-01 yorrick/database
+```
 
 
 
