@@ -29,7 +29,8 @@ echo '' > /Users/yorrick/.fleetctl/known_hosts
 fleetctl --tunnel 127.0.0.1:2222 submit services/*
 fleetctl --tunnel 127.0.0.1:2222 start database.service
 fleetctl --tunnel 127.0.0.1:2222 start database-discovery.service
-fleetctl --tunnel 127.0.0.1:2222 start application@1
+fleetctl --tunnel 127.0.0.1:2222 start application@1.service
+fleetctl --tunnel 127.0.0.1:2222 start application@2.service
 
 # get unit statuses
 fleetctl --tunnel 127.0.0.1:2222 status database.service
@@ -49,11 +50,12 @@ etcdctl ls --recursive /
 On core-01 by example, run
 
 ```
-cd /home/core/share
-# build image
-docker build -t yorrick/application application/
-# push image to docker repo (credentials will be asked)
-docker push yorrick/application
+# build and push base uwsgi image
+docker build -t yorrick/uwsgi /home/core/share/application/uwsgi && docker push yorrick/uwsgi
+# build image and push image to docker repo (credentials will be asked)
+docker build -t yorrick/application /home/core/share/application/flask && docker push yorrick/application
+# pull database image
+docker pull yorrick/database
 ```
 
 # to test if container boots (optionnal)
@@ -73,6 +75,9 @@ docker push yorrick/application
 Test that you can connect to postgres from container
 psql --username docker --host 172.12.8.101 --port 5432 docker
 
+To initialize database, inside application container in ipython, run
+from database import db
+db.create_all()
 
 
 
