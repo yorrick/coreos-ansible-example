@@ -9,3 +9,4 @@ ExecStartPre=-/usr/bin/docker kill database-01
 ExecStartPre=-/usr/bin/docker rm database-01
 ExecStartPre=/usr/bin/docker pull yorrick/database
 ExecStart=/usr/bin/docker run --name database-01 -p 5432:5432 yorrick/database
+ExecStop=/usr/bin/docker stop database-01

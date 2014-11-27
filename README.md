@@ -24,21 +24,22 @@ ssh-add ~/.vagrant.d/insecure_private_key
 
 # Find vagrant ssh port
 export VAGRANT_SSH_PORT=`vagrant ssh-config core-01 | grep Port | awk '{print $2}'`
+export FLEETCTL_TUNNEL=127.0.0.1:$VAGRANT_SSH_PORT
 
 # Cleanup known_hosts file 
 echo '' > /Users/yorrick/.fleetctl/known_hosts
 
 # tunnel configuration can b found using "vagrant ssh-config core-01" by example
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT submit services/*
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start database.service
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start database-discovery.service
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start application@1.service
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start application@2.service
+fleetctl submit services/*
+fleetctl start database.service
+fleetctl start database-discovery.service
+fleetctl start application@1.service
+fleetctl start application@2.service
 
 # get unit statuses
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT status database.service
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT status application@1
-fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT list-units
+fleetctl status database.service
+fleetctl status application@1
+fleetctl list-units
 ```
 
 

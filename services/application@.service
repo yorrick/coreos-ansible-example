@@ -19,6 +19,7 @@ ExecStartPre=-/usr/bin/docker rm application-%i
 ExecStartPre=/usr/bin/docker pull yorrick/application
 ExecStartPost=/usr/bin/etcdctl set /services/application/%i ${COREOS_PUBLIC_IPV4}:800%i
 ExecStart=/usr/bin/docker run --name application-%i -p 8000:8000 yorrick/application /application/confd-watch
+ExecStop=/usr/bin/docker stop application-%i
 ExecStopPost=/usr/bin/etcdctl rm /services/application/%i
 
 [X-Fleet]
