@@ -22,20 +22,23 @@ brew install fleetctl
 # Add vagrant private key to ssh (fleetctl doesn’t expose any options to configure the SSH connection)
 ssh-add ~/.vagrant.d/insecure_private_key
 
+# Find vagrant ssh port
+export VAGRANT_SSH_PORT=`vagrant ssh-config core-01 | grep Port | awk '{print $2}'`
+
 # Cleanup known_hosts file 
 echo '' > /Users/yorrick/.fleetctl/known_hosts
 
 # tunnel configuration can b found using "vagrant ssh-config core-01" by example
-fleetctl --tunnel 127.0.0.1:2222 submit services/*
-fleetctl --tunnel 127.0.0.1:2222 start database.service
-fleetctl --tunnel 127.0.0.1:2222 start database-discovery.service
-fleetctl --tunnel 127.0.0.1:2222 start application@1.service
-fleetctl --tunnel 127.0.0.1:2222 start application@2.service
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT submit services/*
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start database.service
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start database-discovery.service
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start application@1.service
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT start application@2.service
 
 # get unit statuses
-fleetctl --tunnel 127.0.0.1:2222 status database.service
-fleetctl --tunnel 127.0.0.1:2222 status application@1
-fleetctl --tunnel 127.0.0.1:2222 list-units
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT status database.service
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT status application@1
+fleetctl --tunnel 127.0.0.1:$VAGRANT_SSH_PORT list-units
 ```
 
 ### To list services in etcd 
@@ -82,6 +85,14 @@ docker run -d --name application-01 -p 80:80 yorrick/application
 ```
 docker commit database-01 yorrick/database
 ```
+
+
+## Debug confd 
+```
+docker run --name application-test --rm -t -i -p 8000:8000 yorrick/application /bin/bash  # run container
+confd -onetime=true -debug=true -node 172.17.42.1:4001 -config-file /etc/confd/conf.d/flask.toml  # launch confd manually
+```
+
 
 
 
