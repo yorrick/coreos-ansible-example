@@ -27,6 +27,3 @@ python init_db.py
 # Start uwsgi
 echo "[uwsgi] starting uwsgi service..."
 uwsgi --http 0.0.0.0:8000 --master --logto /var/log/application.log --module app --callable app --touch-reload /application/uwsgi_reload
-
-# Tail all uwsgi log files
-tail -f /var/log/application.log
