@@ -30,7 +30,10 @@ export FLEETCTL_TUNNEL=127.0.0.1:$VAGRANT_SSH_PORT
 echo '' > /Users/yorrick/.fleetctl/known_hosts
 
 # tunnel configuration can b found using "vagrant ssh-config core-01" by example
+fleetctl list-machines
 fleetctl submit services/*
+fleetctl list-unit-files
+
 fleetctl start database.service
 fleetctl start database-discovery.service
 fleetctl start application@1.service
