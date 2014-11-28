@@ -97,6 +97,17 @@ confd -onetime=true -debug=true -node 172.17.42.1:4001  # launch confd manually
 ```
 
 
+## Backup database files (please shut down the database before doing that!)
+```
+# on your host, run
+fleetctl stop database.service
+
+
+# run this on node that runs the database
+sudo docker run -it --rm --volumes-from database-01 -v /home/core/share:/backup --name dbdata ubuntu tar cvf /backup/backup.tar /etc/postgresql /var/log/postgresql /var/lib/postgresql
+# or, using fleetctl (does not work yet)
+fleetctl destroy database-backup.service && fleetctl start services/database-backup.service
+```
 
 
 Rebuild application container

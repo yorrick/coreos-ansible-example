@@ -111,14 +111,11 @@ Vagrant.configure("2") do |config|
         # see https://docs.vagrantup.com/v2/provisioning/ansible.html
 
         core_list = (1..$num_instances).to_a.map {|index| "core-0#{index}"}
-        puts 'core_list', core_list
 
         ansible.groups = {
           "coreos" => core_list,
           "all_groups:children" => ["coreos"]
         }
-
-        puts 'ansible.groups', ansible.groups
 
         ansible.limit = 'all'
         ansible.verbose = 'vvvv'
@@ -129,7 +126,7 @@ Vagrant.configure("2") do |config|
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-      #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+      config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
     end
   end
