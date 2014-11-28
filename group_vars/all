@@ -4,4 +4,4 @@ host_key_checking=False
 services_dir=/home/core/services
 
 # this value is automatically changed by vagrant during "vagrant up"
-cluster_token=https://discovery.etcd.io/9dffb7b7ea5d2dd3258949743a006907
+cluster_token=https://discovery.etcd.io/cf9280d404b8e1e810e258b9cafea656

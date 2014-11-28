@@ -12,7 +12,7 @@ $vb_gui = false
 $vb_memory = 700
 $vb_cpus = 1
 $expose_docker_tcp = 2375
-$expose_etcd = 4000
+$expose_etcd = 4001
 
 
 Vagrant.configure("2") do |config|
@@ -54,14 +54,11 @@ Vagrant.configure("2") do |config|
 
     cluster_token = open('https://discovery.etcd.io/new').read
     ssh_config = (1..$num_instances).to_a.map {|index| "core-#{index} ansible_ssh_host=172.12.8.10#{index}"}
-    core_list = (1..$num_instances).to_a.map {|index| "core-#{index}"}
 
     text = File.read(var_file)
 
     # writes ansible configuration
     new_contents = text
-    new_contents = new_contents.gsub(/<ssh_config>/, ssh_config.join("\n"))
-    new_contents = new_contents.gsub(/<core_list>/, core_list.join("\n"))
     new_contents = new_contents.gsub(/<cluster_token>/, 'cluster_token=' + cluster_token)
 
     File.open(var_file, "w") {|file| file.puts new_contents }
@@ -93,13 +90,13 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      #if $expose_etcd
-      #  config.vm.network "forwarded_port", guest: 4001, host: ($expose_etcd + i - 1), auto_correct: true
-      #end
+      if $expose_etcd
+        config.vm.network "forwarded_port", guest: 4001, host: ($expose_etcd + i - 1), auto_correct: true
+      end
 
-      #if $expose_docker_tcp
-      #  config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), auto_correct: true
-      #end
+      if $expose_docker_tcp
+        config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), auto_correct: true
+      end
 
       config.vm.provider :vmware_fusion do |vb|
         vb.gui = $vb_gui
@@ -115,6 +112,17 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "bootstrap.yml"
         # we do not provide any inventory, vagrant will generate one for us
         # see https://docs.vagrantup.com/v2/provisioning/ansible.html
+
+        core_list = (1..$num_instances).to_a.map {|index| "core-0#{index}"}
+        puts 'core_list', core_list
+
+        ansible.groups = {
+          #"coreos" => core_list,
+          "all_groups:children" => ["coreos"]
+        }
+
+        puts 'ansible.groups', ansible.groups
+
         ansible.limit = 'all'
         ansible.verbose = 'vvvv'
         ansible.host_key_checking = false
