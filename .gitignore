@@ -1,4 +1,5 @@
 .vagrant
 .idea
-inventory/vagrant
 group_vars/all
+backup.tar
+

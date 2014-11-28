@@ -4,8 +4,8 @@ Description=Backup database files
 #BindsTo=database.service
 
 [Service]
-ExecStartPre=-/usr/bin/docker rm dbdata
-ExecStart=/usr/bin/docker run -it --rm --volumes-from database-01 -v /home/core/share:/backup --name dbdata ubuntu tar cvf /backup/backup.tar /etc/postgresql /var/log/postgresql /var/lib/postgresql
+ExecStartPre=-/usr/bin/docker rm db-backup
+ExecStart=/usr/bin/docker run -it --rm --volumes-from database-01 -v /home/core/share:/backup --name db-backup ubuntu tar cvf /backup/backup.tar /etc/postgresql /var/log/postgresql /var/lib/postgresql
 
 [X-Fleet]
 MachineOf=database.service

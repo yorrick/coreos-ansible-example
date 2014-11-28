@@ -1,0 +1,11 @@
+[Unit]
+Description=Restore database files
+#After=database.service
+#BindsTo=database.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm db-restore
+ExecStart=/usr/bin/docker run --volumes-from database-01 -v /home/core/share:/backup --name db-restore ubuntu tar xvf /backup/backup.tar
+
+[X-Fleet]
+MachineOf=database.service

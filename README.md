@@ -107,17 +107,23 @@ fleetctl stop database.service
 sudo docker run -it --rm --volumes-from database-01 -v /home/core/share:/backup --name dbdata ubuntu tar cvf /backup/backup.tar /etc/postgresql /var/log/postgresql /var/lib/postgresql
 
 # or, using fleetctl
+fleetctl stop database.service
+
 rm backup.tar
 fleetctl destroy database-backup.service
 fleetctl start services/database-backup.service
 fleetctl status database-backup.service
+fleetctl start database.service
+
+
+fleetctl stop database.service
+fleetctl destroy database-restore.service
+fleetctl start services/database-restore.service
+fleetctl status database-restore.service
+fleetctl start database.service
 ```
 
 
-Rebuild application container
-cd share/application/
-docker stop application-01; docker rm application-01; docker build -t yorrick/application . && docker run -t -i --name application-01 -p 80:80 yorrick/application /bin/bash
-docker push yorrick/application
 
 Test that you can connect to postgres from container
 psql --username docker --host 172.12.8.101 --port 5432 docker
