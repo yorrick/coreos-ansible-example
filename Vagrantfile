@@ -53,13 +53,10 @@ Vagrant.configure("2") do |config|
     require 'open-uri'
 
     cluster_token = open('https://discovery.etcd.io/new').read
-    ssh_config = (1..$num_instances).to_a.map {|index| "core-#{index} ansible_ssh_host=172.12.8.10#{index}"}
-
-    text = File.read(var_file)
 
     # writes ansible configuration
-    new_contents = text
-    new_contents = new_contents.gsub(/<cluster_token>/, 'cluster_token=' + cluster_token)
+    text = File.read(var_file)
+    new_contents = text.gsub(/<cluster_token>/, 'cluster_token: ' + cluster_token)
 
     File.open(var_file, "w") {|file| file.puts new_contents }
   end
@@ -117,7 +114,7 @@ Vagrant.configure("2") do |config|
         puts 'core_list', core_list
 
         ansible.groups = {
-          #"coreos" => core_list,
+          "coreos" => core_list,
           "all_groups:children" => ["coreos"]
         }
 

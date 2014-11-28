@@ -1,7 +1,0 @@
-ansible_ssh_user=core
-ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
-host_key_checking=False
-services_dir=/home/core/services
-
-# this value is automatically changed by vagrant during "vagrant up"
-cluster_token=https://discovery.etcd.io/cf9280d404b8e1e810e258b9cafea656

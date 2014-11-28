@@ -1,7 +1,9 @@
-ansible_ssh_user=core
-ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
-host_key_checking=False
-services_dir=/home/core/services
+# put the default config here
+---
 
-# this value is automatically changed by vagrant during "vagrant up"
+ansible_ssh_user: core
+ansible_python_interpreter: "PATH=/home/core/bin:$PATH python"
+host_key_checking: False
+services_dir: /home/core/services
+
 <cluster_token>

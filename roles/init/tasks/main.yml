@@ -7,8 +7,13 @@
 - name: Wait for cloud config to be applied
   wait_for: port=4001 delay=10
 
+# random is necessary for messages not to clash when we setup mutilple cores
+- name: Generate a random message
+  command: echo message-$RANDOM
+  register: message
+
 - name: Test that etcd is running
-  shell: "etcdctl set /message Hello && etcdctl rm /message"
+  shell: etcdctl set /{{ message.stdout }} Hello && etcdctl rm /{{ message.stdout }}
 
 - name: Test that fleet is running
   command: fleetctl list-machines
