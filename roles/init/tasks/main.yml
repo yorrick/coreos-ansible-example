@@ -9,7 +9,7 @@
 
 # random is necessary for messages not to clash when we setup mutilple cores
 - name: Generate a random message
-  command: echo message-$RANDOM
+  shell: "echo message-$RANDOM"
   register: message
 
 - name: Test that etcd is running
