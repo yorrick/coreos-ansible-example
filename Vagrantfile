@@ -5,11 +5,11 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
-$num_instances = 1
+$num_instances = 3
 $update_channel = "stable"
 $enable_serial_logging = false
 $vb_gui = false
-$vb_memory = 1024
+$vb_memory = 700
 $vb_cpus = 1
 $expose_docker_tcp = 2375
 $expose_etcd = 4000
@@ -37,16 +37,16 @@ Vagrant.configure("2") do |config|
   end
 
 
-  # replaces tocken with a new value when doing "vagrant up"
-  inventory_file = 'inventory/vagrant'
-  example_inventory_file = inventory_file + '.example'
+  # replaces token with a new value when doing "vagrant up"
+  var_file = 'group_vars/all'
+  example_var_file = var_file + '.example'
 
-  if !File.exists?(inventory_file)
-    FileUtils.copy_file(example_inventory_file, inventory_file)
+  if !File.exists?(var_file)
+    FileUtils.copy_file(example_var_file, var_file)
   end
 
   if ARGV[0].eql?('destroy')
-    FileUtils.rm(inventory_file)
+    FileUtils.rm(var_file)
   end
 
   if ARGV[0].eql?('up')
@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
     ssh_config = (1..$num_instances).to_a.map {|index| "core-#{index} ansible_ssh_host=172.12.8.10#{index}"}
     core_list = (1..$num_instances).to_a.map {|index| "core-#{index}"}
 
-    text = File.read(inventory_file)
+    text = File.read(var_file)
 
     # writes ansible configuration
     new_contents = text
@@ -64,12 +64,11 @@ Vagrant.configure("2") do |config|
     new_contents = new_contents.gsub(/<core_list>/, core_list.join("\n"))
     new_contents = new_contents.gsub(/<cluster_token>/, 'cluster_token=' + cluster_token)
 
-    File.open(inventory_file, "w") {|file| file.puts new_contents }
+    File.open(var_file, "w") {|file| file.puts new_contents }
   end
 
 
   (1..$num_instances).each do |i|
-
     config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
 
@@ -94,15 +93,13 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      # forwards the port of core-01 on host
+      #if $expose_etcd
+      #  config.vm.network "forwarded_port", guest: 4001, host: ($expose_etcd + i - 1), auto_correct: true
+      #end
 
-      if $expose_etcd
-        config.vm.network "forwarded_port", guest: 4001, host: ($expose_etcd + i - 1), auto_correct: true
-      end
-
-      if $expose_docker_tcp
-        config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), auto_correct: true
-      end
+      #if $expose_docker_tcp
+      #  config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), auto_correct: true
+      #end
 
       config.vm.provider :vmware_fusion do |vb|
         vb.gui = $vb_gui
@@ -116,9 +113,10 @@ Vagrant.configure("2") do |config|
 
       config.vm.provision "ansible" do |ansible|
         ansible.playbook = "bootstrap.yml"
-        ansible.inventory_path = "inventory/vagrant"
+        # we do not provide any inventory, vagrant will generate one for us
+        # see https://docs.vagrantup.com/v2/provisioning/ansible.html
         ansible.limit = 'all'
-        ansible.verbose = 'vv'
+        ansible.verbose = 'vvvv'
         ansible.host_key_checking = false
       end
 
@@ -126,7 +124,7 @@ Vagrant.configure("2") do |config|
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-      config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+      #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
     end
   end
