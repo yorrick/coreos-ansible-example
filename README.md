@@ -105,8 +105,12 @@ fleetctl stop database.service
 
 # run this on node that runs the database
 sudo docker run -it --rm --volumes-from database-01 -v /home/core/share:/backup --name dbdata ubuntu tar cvf /backup/backup.tar /etc/postgresql /var/log/postgresql /var/lib/postgresql
-# or, using fleetctl (does not work yet)
-fleetctl destroy database-backup.service && fleetctl start services/database-backup.service
+
+# or, using fleetctl
+rm backup.tar
+fleetctl destroy database-backup.service
+fleetctl start services/database-backup.service
+fleetctl status database-backup.service
 ```
 
 
