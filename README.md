@@ -89,7 +89,7 @@ docker run -d --name application-01 -p 80:80 yorrick/application
 
 ## Debug confd 
 ```
-docker run --name application-test --rm -t -i -p 8000:8000 yorrick/application /bin/bash  # run container
+docker run --name application-test --rm -t -i yorrick/application /bin/bash  # run container
 confd -onetime=true -debug=true -node 172.17.42.1:4001  # launch confd manually
 ```
 

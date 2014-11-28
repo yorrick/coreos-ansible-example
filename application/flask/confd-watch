@@ -11,7 +11,7 @@ export ETCD=$HOST_IP:4001
 echo "[uwsgi] booting container. ETCD: $ETCD"
 
 # Loop until confd has updated the nginx config
-until confd -onetime -node $ETCD -config-file /application/flask.toml; do
+until confd -onetime -node $ETCD -verbose -config-file /application/flask.toml; do
   echo "[uwsgi] waiting for confd to refresh config.py"
   sleep 5
 done
@@ -26,4 +26,4 @@ python init_db.py
 
 # Start uwsgi
 echo "[uwsgi] starting uwsgi service..."
-uwsgi --http 0.0.0.0:8000 --master --logto /var/log/application.log --module app --callable app --touch-reload /application/uwsgi_reload
+uwsgi --http 0.0.0.0:8000 --master --module app --callable app --touch-reload /application/uwsgi_reload
